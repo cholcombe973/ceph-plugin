@@ -1,8 +1,12 @@
+#![allow(dead_code,
+         non_camel_case_types,
+         non_upper_case_globals,
+         non_snake_case)]
 extern crate libc;
 
 mod objclass;
 
-use std::ffi::{CStr, CString};
+use std::ffi::CString;
 
 //These need to be defined so Ceph keep track of our version info
 #[no_mangle]
@@ -36,22 +40,21 @@ pub extern "C" fn __cls_init() {
     let mut h = Hello{};
     let mut cls_ptr: *mut ::std::os::raw::c_void = &mut h as *mut _ as *mut ::std::os::raw::c_void;
     let mut say_hello_ptr: *mut ::std::os::raw::c_void = &mut say_hello as *mut _ as *mut ::std::os::raw::c_void;
+    let class_call_ptr = say_hello as unsafe extern fn(_, _, _, _, _) -> _;
 
+    /*
     let mut class_call_ptr = Some(
-        say_hello
+        say_hello as unsafe extern fn(_, _, _, _, _) -> _
     );
+    */
 
     unsafe{
         objclass::cls_log(0, CString::new("Hello from Rust").unwrap().as_ptr());
-    }
-
-    unsafe{
         objclass::cls_register(CString::new("rust_hello").unwrap().as_ptr(), &mut cls_ptr);
+        objclass::cls_register_method(cls_ptr,
+                                      CString::new("say_hello").unwrap().as_ptr(),
+                                      objclass::CLS_METHOD_RD,
+                                      class_call_ptr,
+                                      &mut say_hello_ptr);
     }
-
-    objclass::cls_register_method(cls_ptr,
-                                  CString::new("say_hello").unwrap().as_ptr(),
-                                  objclass::CLS_METHOD_RD,
-                                  class_call_ptr,
-                                  &mut say_hello_ptr);
 }

@@ -13,12 +13,12 @@ pub type cls_handle_t = *mut ::std::os::raw::c_void;
 pub type cls_method_handle_t = *mut ::std::os::raw::c_void;
 pub type cls_method_context_t = *mut ::std::os::raw::c_void;
 pub type cls_method_call_t =
-    Option<unsafe extern "C" fn(ctx: cls_method_context_t,
+    unsafe extern "C" fn(ctx: cls_method_context_t,
                                                  indata: *mut ::std::os::raw::c_char,
                                                  datalen: ::std::os::raw::c_int,
                                                  outdata: *mut *mut ::std::os::raw::c_char,
                                                  outdatalen: *mut ::std::os::raw::c_int)
-                                                 -> ::std::os::raw::c_int>;
+                                                 -> ::std::os::raw::c_int;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
