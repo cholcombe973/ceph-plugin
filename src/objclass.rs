@@ -5,11 +5,15 @@
          non_snake_case)]
 extern crate libc;
 
+pub static CLS_METHOD_RD: ::std::os::raw::c_int       =   0x1;
+pub static CLS_METHOD_WR: ::std::os::raw::c_int       =   0x2;
+pub static CLS_METHOD_PUBLIC: ::std::os::raw::c_int   =   0x4;
+
 pub type cls_handle_t = *mut ::std::os::raw::c_void;
 pub type cls_method_handle_t = *mut ::std::os::raw::c_void;
 pub type cls_method_context_t = *mut ::std::os::raw::c_void;
 pub type cls_method_call_t =
-    ::std::option::Option<unsafe extern "C" fn(ctx: cls_method_context_t,
+    Option<unsafe extern "C" fn(ctx: cls_method_context_t,
                                                  indata: *mut ::std::os::raw::c_char,
                                                  datalen: ::std::os::raw::c_int,
                                                  outdata: *mut *mut ::std::os::raw::c_char,

@@ -4,10 +4,7 @@ mod objclass;
 
 use std::ffi::{CStr, CString};
 
-static CLS_METHOD_RD: ::std::os::raw::c_int       =   0x1;
-static CLS_METHOD_WR: ::std::os::raw::c_int       =   0x2;
-static CLS_METHOD_PUBLIC: ::std::os::raw::c_int   =   0x4;
-
+//These need to be defined so Ceph keep track of our version info
 #[no_mangle]
 pub static __cls_ver_maj: ::std::os::raw::c_int = 1;
 #[no_mangle]
@@ -15,11 +12,13 @@ pub static __cls_ver_min: ::std::os::raw::c_int = 0;
 #[no_mangle]
 pub static __cls_ver__: ::std::os::raw::c_int = 1_0;
 
+/*
 #[repr(C)]
 pub struct Safe<T>{ x: T }
 unsafe impl<T> Send for Safe<T> {}
 unsafe impl<T> Sync for Safe<T> {}
-#[no_mangle] pub static __cls_name: Safe<*const u8> = Safe {x: b"rust_hellow\0" as *const u8 };
+#[no_mangle] pub static __cls_name: Safe<*const u8> = Safe {x: b"rust_hello\0" as *const u8 };
+*/
 
 ///Empty struct to simulate a class and make Ceph happy
 struct Hello{}
@@ -37,12 +36,11 @@ pub extern "C" fn __cls_init() {
     let mut h = Hello{};
     let mut cls_ptr: *mut ::std::os::raw::c_void = &mut h as *mut _ as *mut ::std::os::raw::c_void;
     let mut say_hello_ptr: *mut ::std::os::raw::c_void = &mut say_hello as *mut _ as *mut ::std::os::raw::c_void;
+
     let mut class_call_ptr = Some(
         say_hello
     );
 
-    // this log message, at level 0, will always appear in the ceph-osd
-    // log file.
     unsafe{
         objclass::cls_log(0, CString::new("Hello from Rust").unwrap().as_ptr());
     }
@@ -51,11 +49,9 @@ pub extern "C" fn __cls_init() {
         objclass::cls_register(CString::new("rust_hello").unwrap().as_ptr(), &mut cls_ptr);
     }
 
-/*
     objclass::cls_register_method(cls_ptr,
                                   CString::new("say_hello").unwrap().as_ptr(),
-                                  CLS_METHOD_RD,
+                                  objclass::CLS_METHOD_RD,
                                   class_call_ptr,
                                   &mut say_hello_ptr);
-*/
 }
