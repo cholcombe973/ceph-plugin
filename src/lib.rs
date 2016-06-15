@@ -2,11 +2,28 @@ extern crate libc;
 
 mod objclass;
 
-use std::ffi::CString;
+use std::ffi::{CStr, CString};
 
 static CLS_METHOD_RD: ::std::os::raw::c_int       =   0x1;
 static CLS_METHOD_WR: ::std::os::raw::c_int       =   0x2;
 static CLS_METHOD_PUBLIC: ::std::os::raw::c_int   =   0x4;
+
+#[no_mangle]
+pub static __cls_ver_maj: ::std::os::raw::c_int = 1;
+#[no_mangle]
+pub static __cls_ver_min: ::std::os::raw::c_int = 0;
+#[no_mangle]
+pub static __cls_ver__: ::std::os::raw::c_int = 1_0;
+
+/*
+#[no_mangle]
+pub static __cls_name: *const char = "rust_hello";
+*/
+#[repr(C)]
+pub struct Safe<T>{ x: T }
+unsafe impl<T> Send for Safe<T> {}
+unsafe impl<T> Sync for Safe<T> {}
+#[no_mangle] pub static FOO: Safe<*const u8> = Safe {x: b"rust_hellow\0" as *const u8 };
 
 ///Empty struct to simulate a class and make Ceph happy
 struct Hello{}
