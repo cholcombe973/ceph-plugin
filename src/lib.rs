@@ -23,7 +23,7 @@ pub static __cls_name: *const char = "rust_hello";
 pub struct Safe<T>{ x: T }
 unsafe impl<T> Send for Safe<T> {}
 unsafe impl<T> Sync for Safe<T> {}
-#[no_mangle] pub static FOO: Safe<*const u8> = Safe {x: b"rust_hellow\0" as *const u8 };
+#[no_mangle] pub static __cls_name: Safe<*const u8> = Safe {x: b"rust_hellow\0" as *const u8 };
 
 ///Empty struct to simulate a class and make Ceph happy
 struct Hello{}
