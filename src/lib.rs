@@ -15,10 +15,6 @@ pub static __cls_ver_min: ::std::os::raw::c_int = 0;
 #[no_mangle]
 pub static __cls_ver__: ::std::os::raw::c_int = 1_0;
 
-/*
-#[no_mangle]
-pub static __cls_name: *const char = "rust_hello";
-*/
 #[repr(C)]
 pub struct Safe<T>{ x: T }
 unsafe impl<T> Send for Safe<T> {}
@@ -54,15 +50,6 @@ pub extern "C" fn __cls_init() {
     unsafe{
         objclass::cls_register(CString::new("rust_hello").unwrap().as_ptr(), &mut cls_ptr);
     }
-
-    // There are two flags we specify for methods:
-    //
-    //    RD : whether this method (may) read prior object state
-    //    WR : whether this method (may) write or update the object
-    //
-    // A method can be RD, WR, neither, or both.  If a method does
-    // neither, the data it returns to the caller is a function of the
-    // request and not the object contents.
 
 /*
     objclass::cls_register_method(cls_ptr,
