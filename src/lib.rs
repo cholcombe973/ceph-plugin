@@ -1,31 +1,42 @@
+extern crate libc;
+
 mod objclass;
+
 use std::ffi::CString;
 
 static CLS_METHOD_RD: ::std::os::raw::c_int       =   0x1;
 static CLS_METHOD_WR: ::std::os::raw::c_int       =   0x2;
 static CLS_METHOD_PUBLIC: ::std::os::raw::c_int   =   0x4;
 
-struct Hello{
+///Empty struct to simulate a class and make Ceph happy
+struct Hello{}
 
-}
-impl Hello{
-    pub extern fn say_hello(){
-
-    }
-    pub extern fn record_hello(){
-
-    }
+unsafe extern fn say_hello(ctx: objclass::cls_method_context_t,
+                                                 indata: *mut ::std::os::raw::c_char,
+                                                 datalen: ::std::os::raw::c_int,
+                                                 outdata: *mut *mut ::std::os::raw::c_char,
+                                                 outdatalen: *mut ::std::os::raw::c_int)-> ::std::os::raw::c_int{
+    0
 }
 
 #[no_mangle]
 pub extern "C" fn __cls_init() {
     let mut h = Hello{};
+    let mut cls_ptr: *mut ::std::os::raw::c_void = &mut h as *mut _ as *mut ::std::os::raw::c_void;
+    let mut say_hello_ptr: *mut ::std::os::raw::c_void = &mut say_hello as *mut _ as *mut ::std::os::raw::c_void;
+    let mut class_call_ptr = Some(
+        say_hello
+    );
 
     // this log message, at level 0, will always appear in the ceph-osd
     // log file.
-    objclass::cls_log(0, CString::new("Hello from Rust").unwrap().as_ptr());
+    unsafe{
+        objclass::cls_log(0, CString::new("Hello from Rust").unwrap().as_ptr());
+    }
 
-    objclass::cls_register(CString::new("rust_hello").unwrap().as_ptr(), &mut h);
+    unsafe{
+        objclass::cls_register(CString::new("rust_hello").unwrap().as_ptr(), &mut cls_ptr);
+    }
 
     // There are two flags we specify for methods:
     //
@@ -36,14 +47,11 @@ pub extern "C" fn __cls_init() {
     // neither, the data it returns to the caller is a function of the
     // request and not the object contents.
 
-    objclass::cls_register_method(&mut h,
+/*
+    objclass::cls_register_method(cls_ptr,
                                   CString::new("say_hello").unwrap().as_ptr(),
                                   CLS_METHOD_RD,
-                                  h.say_hello(),
-                                  &h.say_hello());
-    /*objclass::cls_register_method(h_class,
-                                  CString::new("record_hello").unwrap().as_ptr(),
-                                  CLS_METHOD_WR | CLS_METHOD_PROMOTE,
-                                  record_hello,
-                                  &h_record_hello);*/
+                                  class_call_ptr,
+                                  &mut say_hello_ptr);
+*/
 }

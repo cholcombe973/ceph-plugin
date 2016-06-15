@@ -73,6 +73,15 @@ extern "C" {
                         handle: *mut cls_handle_t)
                         -> ::std::os::raw::c_int;
     pub fn cls_unregister(arg1: cls_handle_t) -> ::std::os::raw::c_int;
+
+    /// There are two flags we specify for methods:
+    ///
+    ///    RD : whether this method (may) read prior object state
+    ///    WR : whether this method (may) write or update the object
+    ///
+    /// A method can be RD, WR, neither, or both.  If a method does
+    /// neither, the data it returns to the caller is a function of the
+    /// request and not the object contents.
     pub fn cls_register_method(hclass: cls_handle_t,
                                method: *const ::std::os::raw::c_char,
                                flags: ::std::os::raw::c_int,
