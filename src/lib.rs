@@ -16,14 +16,6 @@ pub static __cls_ver_min: ::std::os::raw::c_int = 0;
 #[no_mangle]
 pub static __cls_ver__: ::std::os::raw::c_int = 1_0;
 
-/*
-#[repr(C)]
-pub struct Safe<T>{ x: T }
-unsafe impl<T> Send for Safe<T> {}
-unsafe impl<T> Sync for Safe<T> {}
-#[no_mangle] pub static __cls_name: Safe<*const u8> = Safe {x: b"rust_hello\0" as *const u8 };
-*/
-
 ///Empty struct to simulate a class and make Ceph happy
 struct Hello{}
 
@@ -41,12 +33,6 @@ pub extern "C" fn __cls_init() {
     let mut cls_ptr: *mut ::std::os::raw::c_void = &mut h as *mut _ as *mut ::std::os::raw::c_void;
     let mut say_hello_ptr: *mut ::std::os::raw::c_void = &mut say_hello as *mut _ as *mut ::std::os::raw::c_void;
     let class_call_ptr = say_hello as unsafe extern fn(_, _, _, _, _) -> _;
-
-    /*
-    let mut class_call_ptr = Some(
-        say_hello as unsafe extern fn(_, _, _, _, _) -> _
-    );
-    */
 
     unsafe{
         objclass::cls_log(0, CString::new("Hello from Rust").unwrap().as_ptr());
