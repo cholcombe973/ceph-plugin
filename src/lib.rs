@@ -50,7 +50,7 @@ pub extern "C" fn __cls_init() {
 
     unsafe{
         objclass::cls_log(0, CString::new("Hello from Rust").unwrap().as_ptr());
-        objclass::cls_register(CString::new("rust_hello").unwrap().as_ptr(), &mut cls_ptr);
+        // objclass::cls_register(CString::new("rust_hello").unwrap().as_ptr(), &mut cls_ptr);
         objclass::cls_register_method(cls_ptr,
                                       CString::new("say_hello").unwrap().as_ptr(),
                                       objclass::CLS_METHOD_RD,
